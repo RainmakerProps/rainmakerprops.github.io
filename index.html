@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rainmaker Props</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap" rel="stylesheet">
+<style>
+/* VOICE work: a betting ledger people check every night, honest and fast to scan
+   IDEA a box score / bet ticket: hard rules, hanging numerals, every result printed
+   PICTURE the running units line, one step per bet, filled to the zero line
+   COLOUR white ground, near-black ink, basketball orange for the brand and the line, green/red only for won/lost
+   TYPE Archivo wide 800 for numerals and titles, Archivo for text
+   LAYOUT title + four figures across the top, chart full width beneath, then tonight, then night-by-night ledger */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f0f10);--ink:light-dark(#121212,#f1efec);--mute:light-dark(#5d5d5d,#a9a6a1);--rule:light-dark(#e3e1dd,#2a2a2c);--panel:light-dark(#f6f4f1,#18181a);--org:light-dark(#d9480f,#ff7a3d);--win:light-dark(#137a46,#46c486);--loss:light-dark(#b3261e,#ff6b5f)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+header.top{border-bottom:4px solid var(--ink);padding-block:14px}
+header .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;justify-content:space-between}
+.brand{font-weight:800;font-stretch:118%;font-size:20px;letter-spacing:-.01em}
+.brand b{color:var(--org)}
+.brand span{font-weight:500;font-stretch:100%;font-size:15px;color:var(--mute);margin-left:6px}
+nav{display:flex;gap:20px;flex-wrap:wrap}
+nav a{color:var(--ink);text-decoration:none;font-weight:600}
+nav a:hover,nav a:focus-visible{color:var(--org)}
+h1{font-weight:800;font-stretch:115%;font-size:clamp(34px,5.4vw,52px);line-height:1.05;letter-spacing:-.02em;margin:0 0 6px;text-wrap:balance}
+h2{font-weight:800;font-stretch:112%;font-size:30px;line-height:1.1;letter-spacing:-.02em;margin:0 0 6px}
+h3{font-weight:800;font-size:20px;margin:28px 0 4px}
+.lede{color:var(--mute);margin:0 0 22px;max-width:62ch}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5em,1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.fig1{padding:14px 16px 14px 0}
+.fig1+.fig1{padding-left:16px;border-left:1px solid var(--rule)}
+.fig1 .v{font-weight:800;font-stretch:118%;font-size:clamp(28px,3.6vw,40px);line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fig1 .k{color:var(--mute);font-size:14px;margin-top:6px}
+.up{color:var(--win)}.dn{color:var(--loss)}
+.fig{position:relative;min-height:300px;margin-top:22px}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font:13px Archivo,system-ui,sans-serif;fill:var(--mute);paint-order:stroke;stroke:var(--bg);stroke-width:4px}
+.chartnote{font-size:14px;color:var(--mute);margin:8px 0 0}
+.tonight{background:var(--panel);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.tonight .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:24px 48px}
+.wait{font-size:20px;font-weight:600;margin:6px 0 0;padding:22px;border:2px dashed var(--rule);border-radius:6px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:14px;font-weight:600;color:var(--mute);border-bottom:2px solid var(--ink);padding:8px 10px 6px 0}
+td{border-bottom:1px solid var(--rule);padding:9px 10px 9px 0;vertical-align:top}
+.n{text-align:right;white-space:nowrap}
+.gh td{font-weight:800;font-size:14px;padding-top:16px;border-bottom:1px solid var(--ink)}
+.sub{display:block;color:var(--mute);font-size:13px}
+.small{font-size:14px;color:var(--mute);margin:10px 0 0}
+.tag{display:inline-block;font-size:13px;font-weight:700;padding:2px 8px;border-radius:3px;white-space:nowrap}
+.tag.w{background:color-mix(in srgb,var(--win) 16%,transparent);color:var(--win)}
+.tag.l{background:color-mix(in srgb,var(--loss) 14%,transparent);color:var(--loss)}
+.tag.p,.tag.v{background:var(--panel);color:var(--mute)}
+.night{border-top:2px solid var(--ink)}
+.night:last-of-type{border-bottom:2px solid var(--ink)}
+summary{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;padding:14px 0;cursor:pointer;min-height:44px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";font-weight:800;width:1ch;color:var(--org)}
+details[open] summary::before{content:"−"}
+summary:focus-visible{outline:2px solid var(--org);outline-offset:2px}
+summary .d{font-weight:800;font-size:18px;flex:1 1 12em}
+summary .r,summary .u{font-weight:800;font-stretch:115%;font-size:18px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(14em,1fr));gap:20px 40px;margin-top:14px}
+.how p{margin:0}
+.how b{display:block;font-weight:800;margin-bottom:2px}
+footer{border-top:4px solid var(--ink);color:var(--mute);font-size:14px}
+footer p{margin:0 0 6px;max-width:80ch}
+.scroll{overflow-x:auto}
+@media(max-width:760px){.tonight .wrap{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){table{font-size:14px}th,td{padding:6px 6px 6px 0}.stack thead{display:none}.stack tr{display:grid;grid-template-columns:minmax(0,1fr) auto;padding-block:10px;border-bottom:1px solid var(--rule)}.stack td{border:0;padding:2px 0}.stack td:nth-child(n+3){font-size:13px;color:var(--mute)}.stack td:nth-child(2){text-align:right}.stack td:nth-child(3)::before{content:"Price "}.stack td:nth-child(4)::before{content:"Final "}.stack td:nth-child(3),.stack td:nth-child(4){text-align:left}.fig1+.fig1{border-left:0;padding-left:0}.fig1{padding-right:8px}}
+</style></head><body>
+<header class="top band"><div class="wrap"><div class="brand">Rainmaker Props<b>.</b> <span>NBA player picks</span></div>
+<nav><a href="#tonight">Tonight</a><a href="#results">Results</a><a href="#how">How it works</a></nav></div></header>
+
+<section class="band"><div class="wrap">
+<h1>+4.7u since Nov 22</h1>
+<p class="lede">Every pick is posted before tip-off and graded from the official box score, wins and losses. One unit per bet.</p>
+<div class="figs">
+<div class="fig1"><div class="v">22–15</div><div class="k">Record</div></div>
+<div class="fig1"><div class="v">+4.7u</div><div class="k">Units won</div></div>
+<div class="fig1"><div class="v">+12.7%</div><div class="k">Return per unit bet</div></div>
+<div class="fig1"><div class="v">2 of 2</div><div class="k">Winning nights</div></div>
+</div>
+<div class="fig" id="curve" role="img" aria-label="Running units, one step per graded pick"><svg></svg></div>
+<p class="chartnote">Running total in units, one step per graded pick.</p>
+</div></section>
+
+<section class="band tonight" id="tonight"><div class="wrap">
+<div><h2>Tonight</h2><p class="lede">Tuesday, November 24</p></div>
+<div><p class="wait">Tonight's picks post around 5 PM Central, before the first tip-off.</p></div>
+</div></section>
+
+<section class="band" id="results"><div class="wrap">
+<h2>Results, night by night</h2>
+<p class="lede">Nothing is removed or edited after the games. Voids are players who didn't play.</p>
+<details class="night" open>
+<summary><span class="d">Monday, November 23</span><span class="r">11–9</span>
+<span class="u up">+0.4u</span></summary>
+<div class="scroll"><table class="stack"><thead><tr><th>Player</th><th>Pick</th><th class="n">Price</th>
+<th class="n">Final</th><th>Result</th><th class="n">Units</th></tr></thead><tbody><tr><td>Damian Lillard<span class='sub'>PHI vs. POR</span></td><td>Points Under 21.5</td><td class='n'>−111</td><td class='n'>18</td><td><span class='tag w'>Won</span></td><td class='n'>+0.9u</td></tr><tr><td>Keegan Murray<span class='sub'>SAC vs. SAS</span></td><td>Points Under 12.5</td><td class='n'>−107</td><td class='n'>14</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Jaylen Wells<span class='sub'>CHA vs. MEM</span></td><td>Points Over 9.5</td><td class='n'>−112</td><td class='n'>8</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Amen Thompson<span class='sub'>HOU vs. LAC</span></td><td>Assists Over 2.5</td><td class='n'>−161</td><td class='n'>5</td><td><span class='tag w'>Won</span></td><td class='n'>+0.6u</td></tr><tr><td>Saddiq Bey<span class='sub'>NOP vs. PHX</span></td><td>Points Over 15.5</td><td class='n'>−110</td><td class='n'>21</td><td><span class='tag w'>Won</span></td><td class='n'>+0.9u</td></tr><tr><td>Darryn Peterson<span class='sub'>LAL vs. UTA</span></td><td>Assists Under 4.5</td><td class='n'>−137</td><td class='n'>5</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Immanuel Quickley<span class='sub'>MIL vs. TOR</span></td><td>Points Under 18.5</td><td class='n'>−111</td><td class='n'>13</td><td><span class='tag w'>Won</span></td><td class='n'>+0.9u</td></tr><tr><td>Toumani Camara<span class='sub'>PHI vs. POR</span></td><td>Points Over 10.5</td><td class='n'>−129</td><td class='n'>5</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Ivica Zubac<span class='sub'>IND vs. OKC</span></td><td>Points Over 11.5</td><td class='n'>−102</td><td class='n'>14</td><td><span class='tag w'>Won</span></td><td class='n'>+1.0u</td></tr><tr><td>Ryan Rollins<span class='sub'>MIL vs. TOR</span></td><td>Assists Under 3.5</td><td class='n'>+114</td><td class='n'>3</td><td><span class='tag w'>Won</span></td><td class='n'>+1.1u</td></tr><tr><td>Trey Murphy III<span class='sub'>NOP vs. PHX</span></td><td>Points Over 15.5</td><td class='n'>−111</td><td class='n'>9</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Brandon Miller<span class='sub'>CHA vs. MEM</span></td><td>Points Under 21.5</td><td class='n'>−120</td><td class='n'>20</td><td><span class='tag w'>Won</span></td><td class='n'>+0.8u</td></tr><tr><td>Jeremiah Fears<span class='sub'>NOP vs. PHX</span></td><td>Assists Under 5.5</td><td class='n'>−116</td><td class='n'>11</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Cam Spencer<span class='sub'>CHA vs. MEM</span></td><td>Points Over 9.5</td><td class='n'>−128</td><td class='n'>24</td><td><span class='tag w'>Won</span></td><td class='n'>+0.8u</td></tr><tr><td>Josh Giddey<span class='sub'>CHI vs. CLE</span></td><td>Points Under 14.5</td><td class='n'>−128</td><td class='n'>4</td><td><span class='tag w'>Won</span></td><td class='n'>+0.8u</td></tr><tr><td>De&#x27;Andre Hunter<span class='sub'>SAC vs. SAS</span></td><td>Assists Over 1.5</td><td class='n'>−126</td><td class='n'>8</td><td><span class='tag w'>Won</span></td><td class='n'>+0.8u</td></tr><tr><td>Ayo Dosunmu<span class='sub'>BKN vs. MIN</span></td><td>Assists Under 3.5</td><td class='n'>+112</td><td class='n'>5</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Ziaire Williams<span class='sub'>LAL vs. UTA</span></td><td>Points Over 7.5</td><td class='n'>−124</td><td class='n'>9</td><td><span class='tag w'>Won</span></td><td class='n'>+0.8u</td></tr><tr><td>Brice Sensabaugh<span class='sub'>LAL vs. UTA</span></td><td>Points Over 11.5</td><td class='n'>−102</td><td class='n'>6</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Fred VanVleet<span class='sub'>HOU vs. LAC</span></td><td>Points Over 13.5</td><td class='n'>−112</td><td class='n'>6</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr></tbody></table></div>
+</details><details class="night" >
+<summary><span class="d">Sunday, November 22</span><span class="r">11–6</span>
+<span class="u up">+4.3u</span></summary>
+<div class="scroll"><table class="stack"><thead><tr><th>Player</th><th>Pick</th><th class="n">Price</th>
+<th class="n">Final</th><th>Result</th><th class="n">Units</th></tr></thead><tbody><tr><td>Draymond Green<span class='sub'>BOS vs. GSW</span></td><td>Assists Under 5.5</td><td class='n'>−111</td><td class='n'>3</td><td><span class='tag w'>Won</span></td><td class='n'>+0.9u</td></tr><tr><td>Paul Reed<span class='sub'>ATL vs. DET</span></td><td>Points Over 10.5</td><td class='n'>−105</td><td class='n'>16</td><td><span class='tag w'>Won</span></td><td class='n'>+1.0u</td></tr><tr><td>Tristan da Silva<span class='sub'>ORL vs. WAS</span></td><td>Points Over 10.5</td><td class='n'>−130</td><td class='n'>18</td><td><span class='tag w'>Won</span></td><td class='n'>+0.8u</td></tr><tr><td>Jared McCain<span class='sub'>MIA vs. OKC</span></td><td>Assists Under 2.5</td><td class='n'>−156</td><td class='n'>3</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Daniel Gafford<span class='sub'>DAL vs. UTA</span></td><td>Points Over 8.5</td><td class='n'>−108</td><td class='n'>10</td><td><span class='tag w'>Won</span></td><td class='n'>+0.9u</td></tr><tr><td>Landry Shamet<span class='sub'>IND vs. NYK</span></td><td>Points Over 11.5</td><td class='n'>−116</td><td class='n'>17</td><td><span class='tag w'>Won</span></td><td class='n'>+0.9u</td></tr><tr><td>Josh Giddey<span class='sub'>CHI vs. DEN</span></td><td>Assists Over 8.5</td><td class='n'>+102</td><td class='n'>22</td><td><span class='tag w'>Won</span></td><td class='n'>+1.0u</td></tr><tr><td>AJ Dybantsa<span class='sub'>ORL vs. WAS</span></td><td>Points Under 17.5</td><td class='n'>−106</td><td class='n'>16</td><td><span class='tag w'>Won</span></td><td class='n'>+0.9u</td></tr><tr><td>Kevin Huerter<span class='sub'>ATL vs. DET</span></td><td>Assists Over 2.5</td><td class='n'>−145</td><td class='n'>1</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Naji Marshall<span class='sub'>DAL vs. UTA</span></td><td>Assists Under 3.5</td><td class='n'>−134</td><td class='n'>4</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Andrew Nembhard<span class='sub'>IND vs. NYK</span></td><td>Points Over 14.5</td><td class='n'>−101</td><td class='n'>16</td><td><span class='tag w'>Won</span></td><td class='n'>+1.0u</td></tr><tr><td>Keyonte George<span class='sub'>DAL vs. UTA</span></td><td>Points Under 23.5</td><td class='n'>−119</td><td class='n'>15</td><td><span class='tag w'>Won</span></td><td class='n'>+0.8u</td></tr><tr><td>Kelly Oubre Jr.<span class='sub'>IND vs. NYK</span></td><td>Points Under 12.5</td><td class='n'>−110</td><td class='n'>15</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Neemias Queta<span class='sub'>BOS vs. GSW</span></td><td>Points Over 9.5</td><td class='n'>−114</td><td class='n'>6</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Gui Santos<span class='sub'>BOS vs. GSW</span></td><td>Points Under 7.5</td><td class='n'>−107</td><td class='n'>13</td><td><span class='tag l'>Lost</span></td><td class='n'>−1.0u</td></tr><tr><td>Christian Braun<span class='sub'>CHI vs. DEN</span></td><td>Assists Over 2.5</td><td class='n'>+118</td><td class='n'>3</td><td><span class='tag w'>Won</span></td><td class='n'>+1.2u</td></tr><tr><td>Aday Mara<span class='sub'>MIA vs. OKC</span></td><td>Points Over 11.5</td><td class='n'>−110</td><td class='n'></td><td><span class='tag v'>Void</span></td><td class='n'></td></tr><tr><td>Bam Adebayo<span class='sub'>MIA vs. OKC</span></td><td>Points Over 19.5</td><td class='n'>−113</td><td class='n'>24</td><td><span class='tag w'>Won</span></td><td class='n'>+0.9u</td></tr></tbody></table></div>
+</details>
+</div></section>
+
+<section class="band" id="how"><div class="wrap">
+<h2>How it works</h2>
+<div class="how">
+<p><b>A model, not a hunch</b>Projects minutes, points, rebounds and assists for every player, then compares them with DraftKings' lines.</p>
+<p><b>Only medium edges</b>Picks are spots where the model disagrees with the line by a modest amount. Its biggest disagreements have proven to be its worst.</p>
+<p><b>Flat 1 unit</b>Every pick is the same size, so the record can't be dressed up by bet sizing.</p>
+<p><b>Graded automatically</b>Results come straight from the NBA's box scores the next morning.</p>
+</div></div></section>
+
+<footer class="band"><div class="wrap">
+<p>Picks are opinions for entertainment, not guarantees. Past results don't predict future ones. Only bet where it's legal, and only what you can afford to lose. 21+. Gambling problem? Call 1-800-GAMBLER.</p>
+<p>Updated Nov 24, 2026 11:39 AM.</p>
+</div></footer>
+
+<script>{
+const data=[{"d": "Nov 22", "u": 0.901, "p": "Draymond Green", "r": "WIN"}, {"d": "Nov 22", "u": 1.853, "p": "Paul Reed", "r": "WIN"}, {"d": "Nov 22", "u": 2.622, "p": "Tristan da Silva", "r": "WIN"}, {"d": "Nov 22", "u": 1.622, "p": "Jared McCain", "r": "LOSS"}, {"d": "Nov 22", "u": 2.548, "p": "Daniel Gafford", "r": "WIN"}, {"d": "Nov 22", "u": 3.41, "p": "Landry Shamet", "r": "WIN"}, {"d": "Nov 22", "u": 4.43, "p": "Josh Giddey", "r": "WIN"}, {"d": "Nov 22", "u": 5.373, "p": "AJ Dybantsa", "r": "WIN"}, {"d": "Nov 22", "u": 4.373, "p": "Kevin Huerter", "r": "LOSS"}, {"d": "Nov 22", "u": 3.373, "p": "Naji Marshall", "r": "LOSS"}, {"d": "Nov 22", "u": 4.363, "p": "Andrew Nembhard", "r": "WIN"}, {"d": "Nov 22", "u": 5.203, "p": "Keyonte George", "r": "WIN"}, {"d": "Nov 22", "u": 4.203, "p": "Kelly Oubre Jr.", "r": "LOSS"}, {"d": "Nov 22", "u": 3.203, "p": "Neemias Queta", "r": "LOSS"}, {"d": "Nov 22", "u": 2.203, "p": "Gui Santos", "r": "LOSS"}, {"d": "Nov 22", "u": 3.383, "p": "Christian Braun", "r": "WIN"}, {"d": "Nov 22", "u": 4.268, "p": "Bam Adebayo", "r": "WIN"}, {"d": "Nov 23", "u": 5.169, "p": "Damian Lillard", "r": "WIN"}, {"d": "Nov 23", "u": 4.169, "p": "Keegan Murray", "r": "LOSS"}, {"d": "Nov 23", "u": 3.169, "p": "Jaylen Wells", "r": "LOSS"}, {"d": "Nov 23", "u": 3.79, "p": "Amen Thompson", "r": "WIN"}, {"d": "Nov 23", "u": 4.699, "p": "Saddiq Bey", "r": "WIN"}, {"d": "Nov 23", "u": 3.699, "p": "Darryn Peterson", "r": "LOSS"}, {"d": "Nov 23", "u": 4.6, "p": "Immanuel Quickley", "r": "WIN"}, {"d": "Nov 23", "u": 3.6, "p": "Toumani Camara", "r": "LOSS"}, {"d": "Nov 23", "u": 4.58, "p": "Ivica Zubac", "r": "WIN"}, {"d": "Nov 23", "u": 5.72, "p": "Ryan Rollins", "r": "WIN"}, {"d": "Nov 23", "u": 4.72, "p": "Trey Murphy III", "r": "LOSS"}, {"d": "Nov 23", "u": 5.553, "p": "Brandon Miller", "r": "WIN"}, {"d": "Nov 23", "u": 4.553, "p": "Jeremiah Fears", "r": "LOSS"}, {"d": "Nov 23", "u": 5.334, "p": "Cam Spencer", "r": "WIN"}, {"d": "Nov 23", "u": 6.115, "p": "Josh Giddey", "r": "WIN"}, {"d": "Nov 23", "u": 6.909, "p": "De'Andre Hunter", "r": "WIN"}, {"d": "Nov 23", "u": 5.909, "p": "Ayo Dosunmu", "r": "LOSS"}, {"d": "Nov 23", "u": 6.715, "p": "Ziaire Williams", "r": "WIN"}, {"d": "Nov 23", "u": 5.715, "p": "Brice Sensabaugh", "r": "LOSS"}, {"d": "Nov 23", "u": 4.715, "p": "Fred VanVleet", "r": "LOSS"}];
+const box=document.getElementById('curve');const s=box.querySelector('svg');
+const draw=()=>{const W=s.clientWidth,H=s.clientHeight;if(!W||!H)return;
+ if(!data.length){s.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle">The chart starts after the first graded night.</text>`;return;}
+ const m={l:44,r:64,t:16,b:30};const pts=[0,...data.map(d=>d.u)];
+ let lo=Math.min(0,...pts),hi=Math.max(0,...pts);const pad=Math.max(1,(hi-lo)*.12);lo=Math.floor(lo-pad*.3);hi=Math.ceil(hi+pad);
+ const x=i=>m.l+i*(W-m.l-m.r)/Math.max(1,pts.length-1);const y=v=>m.t+(hi-v)*(H-m.t-m.b)/(hi-lo);
+ let step=`M${x(0)},${y(0)}`;pts.forEach((v,i)=>{if(i){step+=`H${x(i)}V${y(v)}`}});
+ const area=step+`H${x(pts.length-1)}V${y(0)}H${x(0)}Z`;
+ const span=hi-lo,tk=span>12?5:span>6?2:1;let g='';
+ for(let v=Math.ceil(lo/tk)*tk;v<=hi;v+=tk){g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule)" ${v===0?'stroke-width="2" stroke="var(--ink)"':''}/><text x="${m.l-8}" y="${y(v)+4}" text-anchor="end">${v>0?'+':''}${v}u</text>`}
+ let lab='',prev='';data.forEach((d,i)=>{if(d.d!==prev){prev=d.d;const xi=x(i);lab+=`<line x1="${xi}" x2="${xi}" y1="${H-m.b}" y2="${H-m.b+5}" stroke="var(--mute)"/>${W>=520||i===0?`<text x="${xi+4}" y="${H-8}">${d.d}</text>`:''}`}});
+ const last=pts[pts.length-1];
+ s.innerHTML=g+`<path d="${area}" fill="var(--org)" opacity=".14"/><path d="${step}" fill="none" stroke="var(--org)" stroke-width="3" stroke-linejoin="round"/>`+lab+
+ `<circle cx="${x(pts.length-1)}" cy="${y(last)}" r="5" fill="var(--org)"/><text x="${x(pts.length-1)+9}" y="${y(last)+5}" style="font-weight:800;fill:var(--ink)">${last>=0?'+':'−'}${Math.abs(last).toFixed(1)}u</text>`;
+};
+const ro=new ResizeObserver(draw);ro.observe(box);draw();
+}</script>
+</body></html>
